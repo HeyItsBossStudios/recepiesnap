@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Snap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden md:flex">
+        <!-- Sidebar/Left Panel -->
+        <div class="md:w-1/3 bg-gray-900 text-white p-6 md:p-8 flex flex-col justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">Recipe Snap</h1>
+                <p class="text-gray-400 text-sm mb-6">Your voice-activated recipe book.</p>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V2m0 6V2m0 6a2 2 0 00-2-2v2a2 2 0 002 2m0-6h.01M12 18h.01M12 6a2 2 0 00-2 2v2a2 2 0 002 2m0-6c-.519-.402-1.489-1-2.599-1" />
+                        </svg>
+                        <span>Voice-activated Search</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        <span>Simple & Clear Instructions</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8l4-4 4 4V7m0 20-4-4-4 4" />
+                        </svg>
+                        <span>Ingredient Lists</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-sm text-gray-500">
+                <p>&copy; 2025 Recipe Snap. All rights reserved.</p>
+            </div>
+        </div>
+
+        <!-- Main Display Panel -->
+        <div class="md:w-2/3 p-6 md:p-8 flex flex-col">
+            <div id="welcome-message" class="text-center transition-opacity duration-500 ease-in-out opacity-100">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2">Ready to Cook?</h2>
+                <p class="text-gray-600 mb-6">Ask your Google Assistant to "Show me a recipe for..." and it will appear here!</p>
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/200x200/FEE2E2/B91C1C?text=Cooking" alt="Cooking illustration" class="rounded-lg shadow-lg">
+                </div>
+            </div>
+
+            <div id="recipe-card" class="hidden transition-opacity duration-500 ease-in-out opacity-0">
+                <h2 id="recipe-title" class="text-2xl font-bold text-gray-800 mb-4 text-center"></h2>
+                
+                <!-- Ingredients Section -->
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Ingredients</h3>
+                    <ul id="ingredients-list" class="list-none space-y-2 text-gray-600 pl-0"></ul>
+                </div>
+
+                <!-- Instructions Section -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Instructions</h3>
+                    <ol id="instructions-list" class="list-decimal list-inside space-y-3 text-gray-600 pl-4"></ol>
+                </div>
+
+                <!-- Back button -->
+                <div class="mt-8 text-center">
+                    <button id="back-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full transition-colors">
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to simulate Google Assistant response -->
+    <script>
+        const welcomeMessage = document.getElementById('welcome-message');
+        const recipeCard = document.getElementById('recipe-card');
+        const recipeTitle = document.getElementById('recipe-title');
+        const ingredientsList = document.getElementById('ingredients-list');
+        const instructionsList = document.getElementById('instructions-list');
+        const backButton = document.getElementById('back-button');
+
+        // This function will be called by the Google Assistant integration
+        // (in a real-world scenario, this would be a server-side call)
+        function showRecipe(recipe) {
+            // Populate the recipe card
+            recipeTitle.textContent = recipe.title;
+
+            // Clear previous lists
+            ingredientsList.innerHTML = '';
+            instructionsList.innerHTML = '';
+
+            // Add new ingredients
+            recipe.ingredients.forEach(ingredient => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm font-medium mr-2">${ingredient}</span>`;
+                ingredientsList.appendChild(li);
+            });
+
+            // Add new instructions
+            recipe.instructions.forEach(instruction => {
+                const li = document.createElement('li');
+                li.textContent = instruction;
+                instructionsList.appendChild(li);
+            });
+
+            // Animate the transition
+            welcomeMessage.classList.add('opacity-0');
+            setTimeout(() => {
+                welcomeMessage.classList.add('hidden');
+                recipeCard.classList.remove('hidden');
+                setTimeout(() => {
+                    recipeCard.classList.remove('opacity-0');
+                }, 50);
+            }, 500);
+        }
+        
+        // Go back to welcome screen
+        backButton.addEventListener('click', () => {
+            recipeCard.classList.add('opacity-0');
+            setTimeout(() => {
+                recipeCard.classList.add('hidden');
+                welcomeMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    welcomeMessage.classList.remove('opacity-0');
+                }, 50);
+            }, 500);
+        });
+
+        // Example of how the data would be passed.
+        // For demonstration, we'll simulate a recipe being loaded.
+        const exampleRecipe = {
+            title: "Homemade Pizza",
+            ingredients: [
+                "1 pizza dough ball",
+                "1/2 cup tomato sauce",
+                "1 cup shredded mozzarella cheese",
+                "Pepperoni (optional)",
+                "Mushrooms (optional)",
+                "Olive oil"
+            ],
+            instructions: [
+                "Preheat oven to 450°F (232°C).",
+                "On a floured surface, roll out the pizza dough into a circle.",
+                "Transfer the dough to a baking sheet or pizza stone.",
+                "Spread the tomato sauce evenly over the dough, leaving a small border for the crust.",
+                "Sprinkle with mozzarella cheese and add your favorite toppings.",
+                "Bake for 10-15 minutes, or until the crust is golden brown and the cheese is bubbly."
+            ]
+        };
+
+        // You would replace this with your actual Google Assistant integration.
+        // For this example, we'll auto-load the recipe after 3 seconds.
+        window.onload = function() {
+            setTimeout(() => {
+                showRecipe(exampleRecipe);
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
