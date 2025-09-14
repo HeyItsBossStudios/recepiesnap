@@ -11,6 +11,8 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
+    <!-- Include the Interactive Canvas JavaScript library -->
+    <script src="https://www.gstatic.com/assistant/interactivecanvas/api/interactive_canvas.min.js"></script>
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
 
@@ -81,7 +83,7 @@
         </div>
     </div>
 
-    <!-- JavaScript to simulate Google Assistant response -->
+    <!-- JavaScript to handle app logic and Interactive Canvas -->
     <script>
         const welcomeMessage = document.getElementById('welcome-message');
         const recipeCard = document.getElementById('recipe-card');
@@ -90,8 +92,11 @@
         const instructionsList = document.getElementById('instructions-list');
         const backButton = document.getElementById('back-button');
 
-        // This function will be called by the Google Assistant integration
-        // (in a real-world scenario, this would be a server-side call)
+        /**
+         * The function to display the recipe on the screen.
+         * In a real-world scenario, this would be called by the `onUpdate` callback
+         * with data from your conversational action.
+         */
         function showRecipe(recipe) {
             // Populate the recipe card
             recipeTitle.textContent = recipe.title;
@@ -125,8 +130,11 @@
             }, 500);
         }
         
-        // Go back to welcome screen
-        backButton.addEventListener('click', () => {
+        /**
+         * Go back to the welcome screen.
+         * This can be triggered by the back button or a voice command.
+         */
+        function goBack() {
             recipeCard.classList.add('opacity-0');
             setTimeout(() => {
                 recipeCard.classList.add('hidden');
@@ -135,37 +143,60 @@
                     welcomeMessage.classList.remove('opacity-0');
                 }, 50);
             }, 500);
+        }
+
+        backButton.addEventListener('click', () => {
+            goBack();
         });
 
-        // Example of how the data would be passed.
-        // For demonstration, we'll simulate a recipe being loaded.
-        const exampleRecipe = {
-            title: "Homemade Pizza",
-            ingredients: [
-                "1 pizza dough ball",
-                "1/2 cup tomato sauce",
-                "1 cup shredded mozzarella cheese",
-                "Pepperoni (optional)",
-                "Mushrooms (optional)",
-                "Olive oil"
-            ],
-            instructions: [
-                "Preheat oven to 450°F (232°C).",
-                "On a floured surface, roll out the pizza dough into a circle.",
-                "Transfer the dough to a baking sheet or pizza stone.",
-                "Spread the tomato sauce evenly over the dough, leaving a small border for the crust.",
-                "Sprinkle with mozzarella cheese and add your favorite toppings.",
-                "Bake for 10-15 minutes, or until the crust is golden brown and the cheese is bubbly."
-            ]
+        // The Interactive Canvas callbacks
+        const callbacks = {
+            onUpdate: (data) => {
+                // This is where you would receive data from your Conversational Action.
+                // The `data` object would contain the recipe information.
+                console.log('Received data from Assistant:', data);
+                if (data.recipe) {
+                    showRecipe(data.recipe);
+                } else if (data.goBack) {
+                    goBack();
+                }
+            },
+            // The onTtsMark callback can be used for things like highlighting the current step in instructions.
+            onTtsMark: (markName, utterance) => {
+                console.log(`TTS Mark received: ${markName}`);
+            }
         };
 
-        // You would replace this with your actual Google Assistant integration.
-        // For this example, we'll auto-load the recipe after 3 seconds.
-        window.onload = function() {
-            setTimeout(() => {
-                showRecipe(exampleRecipe);
-            }, 3000);
-        };
+        // This is a crucial step to initialize the Interactive Canvas API.
+        interactiveCanvas.ready(callbacks);
+        
+        // Example of how the data would be passed in a real scenario.
+        // For demonstration purposes, we will not auto-load the recipe anymore
+        // as this app is now intended to be driven by a Google Assistant Action.
+        // const exampleRecipe = {
+        //     title: "Homemade Pizza",
+        //     ingredients: [
+        //         "1 pizza dough ball",
+        //         "1/2 cup tomato sauce",
+        //         "1 cup shredded mozzarella cheese",
+        //         "Pepperoni (optional)",
+        //         "Mushrooms (optional)",
+        //         "Olive oil"
+        //     ],
+        //     instructions: [
+        //         "Preheat oven to 450°F (232°C).",
+        //         "On a floured surface, roll out the pizza dough into a circle.",
+        //         "Transfer the dough to a baking sheet or pizza stone.",
+        //         "Spread the tomato sauce evenly over the dough, leaving a small border for the crust.",
+        //         "Sprinkle with mozzarella cheese and add your favorite toppings.",
+        //         "Bake for 10-15 minutes, or until the crust is golden brown and the cheese is bubbly."
+        //     ]
+        // };
+        // window.onload = function() {
+        //     setTimeout(() => {
+        //         showRecipe(exampleRecipe);
+        //     }, 3000);
+        // };
     </script>
 </body>
 </html>
